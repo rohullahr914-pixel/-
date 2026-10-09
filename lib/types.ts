@@ -1,10 +1,10 @@
-export type Product = {
-  id: string;
-  name: string;
-  short: string;
-  description: string;
-  image: string;
-  badge: string;
-  price: string;
-  available: boolean;
-};
+export type Locale = "fa" | "ps" | "en";
+export type Localized = { fa: string; ps: string; en: string };
+export type PackageOption = { id: "carton" | "basket"; label: Localized; weightKg: number; priceAfn: number | null };
+export type Product = { id: string; slug: string; name: Localized; description: Localized; image: string; available: boolean; quantityLabel: Localized; packages: PackageOption[] };
+export type OrderStatus = "pending" | "confirmed" | "preparing" | "dispatched" | "delivered" | "cancelled";
+export type Order = { id: string; createdAt: string; customerName: string; phone: string; whatsapp: string; province: string; city: string; address: string; productId: string; productName: string; packageId: "carton" | "basket"; packageLabel: string; packageWeightKg: number; quantity: number; totalWeightKg: number; unitPriceAfn: number | null; subtotalAfn: number | null; notes: string; internalNotes: string; status: OrderStatus };
+export type DeliveryRule = { province: string; available: boolean; minimumQuantity: number | null; conditions: string; estimatedTime: string };
+export type SiteSettings = { phone: string; whatsapp: string; email: string; address: Localized; homepageHeadline: Localized; homepageIntro: Localized; deliveryRules: DeliveryRule[]; previousMarkets: string[]; targetMarkets: string[]; gallery: { src: string; alt: Localized }[] };
+export type ExportInquiry = { id: string; createdAt: string; company: string; contactName: string; email: string; whatsapp: string; country: string; product: string; volumeMt: number; packaging: string; notes: string };
+export type Database = { products: Product[]; orders: Order[]; exportInquiries: ExportInquiry[]; settings: SiteSettings };

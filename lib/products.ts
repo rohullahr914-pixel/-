@@ -1,5 +1,4 @@
-import products from "@/data/products.json";
 import type { Product } from "./types";
-export function getProducts(): Product[] {
-  return products as Product[];
-}
+import { getProducts as readProducts } from "./store";
+/** @deprecated Use getProducts from lib/store. */
+export async function getProducts(): Promise<Product[]> { return readProducts(); }

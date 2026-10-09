@@ -1,25 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import type { Product } from "@/lib/types";
-
-const file = path.join(process.cwd(), "data", "products.json");
-const authorized = (request: NextRequest) => {
-  const password = process.env.ADMIN_PASSWORD;
-  return Boolean(password && request.headers.get("authorization") === `Bearer ${password}`);
-};
-
-export async function GET() {
-  const data = await fs.readFile(file, "utf8");
-  return NextResponse.json(JSON.parse(data));
-}
-
+import { isAdmin } from "@/lib/auth";
+import { readDatabase, updateDatabase } from "@/lib/store";
+export async function GET() { return NextResponse.json((await readDatabase()).products); }
 export async function PUT(request: NextRequest) {
-  if (!authorized(request)) return NextResponse.json({ error: "رمز مدیریت درست نیست؛ لطفاً دوباره بررسی کنید." }, { status: 401 });
+  if (!isAdmin(request)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const products = await request.json() as Product[];
-  if (!Array.isArray(products) || products.some(p => !p.id || !p.name || !p.image)) {
-    return NextResponse.json({ error: "اطلاعات یکی از محصولات کامل نیست؛ نام، شناسه و تصویر را بررسی کنید." }, { status: 400 });
-  }
-  await fs.writeFile(file, JSON.stringify(products, null, 2), "utf8");
-  return NextResponse.json({ ok: true });
+  if (!Array.isArray(products) || products.some(p => !p.id || !p.slug || !p.name?.fa || !p.name?.en || !p.image || !Array.isArray(p.packages))) return NextResponse.json({ error: "Product information is incomplete." }, { status: 400 });
+  await updateDatabase(database => { database.products = products; }); return NextResponse.json({ ok: true });
 }

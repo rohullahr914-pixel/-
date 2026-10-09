@@ -1,259 +1,39 @@
 "use client";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import type { Product } from "@/lib/types";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { Locale, Product, SiteSettings } from "@/lib/types";
 
-const whatsapp = "93707763729";
-const waLink = (text: string) => `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
+const copy = {
+  fa: { language:"دری", navProducts:"محصولات", navStory:"داستان ما", navDelivery:"ارسال", navExport:"صادرات", navFacilities:"تأسیسات", order:"سفارش عمده", explore:"مشاهده محصولات", kicker:"مستقیم از باغ‌های میدان وردک", title:"سیب تازه و باکیفیت افغانستان، مستقیم به تجارت شما", intro:"سیب‌های عمده سرچشمه، تهیه‌شده مستقیم از باغداران محلی، با بسته‌بندی مطمئن و تحویل هماهنگ‌شده برای فروشگاه‌ها و خریداران تجارتی.", established:"تأسیس در ۱۳۸۷", direct:"خرید مستقیم از باغدار", cold:"سردخانه و انبار", nationwide:"ارسال سراسری", catalogEyebrow:"محصولات عمده", catalogTitle:"سه رقم ممتاز برای تجارت شما", catalogText:"قیمت و موجودی بر اساس فصل و حجم سفارش تأیید می‌شود.", available:"موجود", requestPrice:"درخواست قیمت", orderNow:"سفارش دهید", carton:"کارتن ۱۰ کیلو", basket:"سبد ۹ کیلو", storyEyebrow:"ریشه‌دار در سرچشمه", storyTitle:"از اعتماد باغدار تا رضایت خریدار", storyText:"براداران سرچشمه از سال ۱۳۸۷ با باغداران محلی همکاری می‌کند. ما سیب را مستقیم تهیه، سورت، نگهداری و برای بازارهای افغانستان و سفارش‌های صادراتی آماده می‌کنیم.", years:"سال تجربه", farmers:"رابطه مستقیم", quality:"سورت و بسته‌بندی", deliveryTitle:"تحویل مستقیم عمده در سراسر افغانستان", deliveryText:"ارسال رایگان برای سفارش‌های عمده واجد شرایط، پس از بررسی مقصد، مقدار و شرایط تحویل تأیید می‌شود.", eligible:"مشروط به تأیید شرایط", formEyebrow:"بدون ساخت حساب", formTitle:"سفارش عمده خود را ثبت کنید", name:"نام کامل مشتری", phone:"شماره تماس", whatsapp:"شماره واتس‌اپ (اختیاری)", province:"ولایت", city:"شهر / ولسوالی", address:"آدرس دقیق تحویل", variety:"نوع سیب", packaging:"نوع بسته‌بندی", quantity:"تعداد بسته", weight:"وزن مجموع", subtotal:"جمع محصول", notes:"یادداشت اختیاری", submit:"ثبت سفارش", submitting:"در حال ثبت…", success:"سفارش شما با موفقیت ثبت شد", orderNumber:"شماره سفارش", saved:"اطلاعات سفارش در سیستم ذخیره شد. تیم ما برای تأیید شرایط تحویل و قیمت با شما تماس می‌گیرد.", invalid:"لطفاً همه موارد ضروری را درست تکمیل کنید.", gallery:"از باغ تا بارگیری", facilities:"تأسیسات واقعی، روند شفاف", facilitiesText:"تهیه از باغدار، سورت، بسته‌بندی، نگهداری در سردخانه و بارگیری منظم.", markets:"تجربه بازار و مسیر رشد", previous:"بازارهای پیشین", targets:"بازارهای هدف", exportCta:"درخواست صادرات", contact:"تماس مستقیم", footer:"سیب تازه افغانستان برای تجارت‌های جدی.", details:"جزئیات محصول", afn:"افغانی", conditions:"ارسال رایگان تنها پس از احراز شرایط تأیید می‌شود." },
+  ps: { language:"پښتو", navProducts:"محصولات", navStory:"زموږ کیسه", navDelivery:"سپارنه", navExport:"صادرات", navFacilities:"تاسیسات", order:"عمده فرمایش", explore:"محصولات وګورئ", kicker:"د میدان وردګ له بڼونو مستقیم", title:"د افغانستان تازه او باکیفیته مڼې، مستقیم ستاسو سوداګرۍ ته", intro:"د سرچشمې عمده مڼې، مستقیم له ځايي بڼوالو، خوندي بسته بندي او همغږې سپارنې سره د پلورنځیو او سوداګریزو پېرودونکو لپاره.", established:"په ۱۳۸۷ کې تاسیس", direct:"مستقیم له بڼوال څخه", cold:"سړه خونه او ګودام", nationwide:"ټول هېواد ته سپارنه", catalogEyebrow:"عمده محصولات", catalogTitle:"ستاسو سوداګرۍ لپاره درې غوره ډولونه", catalogText:"بیه او موجودي د موسم او فرمایش د حجم له مخې تاییدېږي.", available:"شته", requestPrice:"بیه وغواړئ", orderNow:"فرمایش وکړئ", carton:"۱۰ کیلو کارتن", basket:"۹ کیلو ټوکرۍ", storyEyebrow:"په سرچشمه کې ریښې", storyTitle:"د بڼوال له باور څخه د پېرودونکي تر رضایت", storyText:"براداران سرچشمه له ۱۳۸۷ کال راهیسې له ځايي بڼوالو سره کار کوي. موږ مڼې مستقیم اخلو، درجه بندي، زېرمه او د افغانستان بازارونو او صادراتو لپاره چمتو کوو.", years:"کلونه تجربه", farmers:"مستقیمې اړیکې", quality:"درجه او بسته بندي", deliveryTitle:"په ټول افغانستان کې مستقیم عمده سپارنه", deliveryText:"وړ عمده فرمایشونو ته وړیا سپارنه د منزل، مقدار او شرایطو له ارزونې وروسته تاییدېږي.", eligible:"د شرایطو تر تایید لاندې", formEyebrow:"حساب ته اړتیا نشته", formTitle:"خپل عمده فرمایش ثبت کړئ", name:"د پېرودونکي بشپړ نوم", phone:"د اړیکې شمېره", whatsapp:"واټس‌اپ (اختیاري)", province:"ولایت", city:"ښار / ولسوالۍ", address:"د سپارنې بشپړ پته", variety:"د مڼې ډول", packaging:"بسته بندي", quantity:"د بستو شمېر", weight:"ټول وزن", subtotal:"ټول قیمت", notes:"اختیاري یادښت", submit:"فرمایش ثبت کړئ", submitting:"ثبتېږي…", success:"ستاسو فرمایش ثبت شو", orderNumber:"د فرمایش شمېره", saved:"فرمایش په سیستم کې خوندي شو. زموږ ټیم به د بیې او سپارنې د شرایطو لپاره اړیکه ونیسي.", invalid:"اړین معلومات په سمه توګه بشپړ کړئ.", gallery:"له بڼ څخه تر بارولو", facilities:"ریښتیني تاسیسات، روښانه بهیر", facilitiesText:"له بڼوال څخه پېرود، درجه بندي، بسته بندي، سړه ذخیره او منظم بارول.", markets:"پخوانۍ تجربه او راتلونکی", previous:"پخواني بازارونه", targets:"هدف بازارونه", exportCta:"د صادراتو پوښتنه", contact:"مستقیم تماس", footer:"د افغانستان تازه مڼې د جدي سوداګرۍ لپاره.", details:"تفصیل", afn:"افغانۍ", conditions:"وړیا سپارنه یوازې د شرایطو تر تایید وروسته ده." },
+  en: { language:"English", navProducts:"Products", navStory:"Our story", navDelivery:"Delivery", navExport:"Exports", navFacilities:"Facilities", order:"Order wholesale", explore:"Explore products", kicker:"Direct from Maidan Wardak orchards", title:"Premium Afghan Apples, Direct to Your Business", intro:"Wholesale apples from Sarchashma, sourced directly from local farmers, carefully packed, stored, and coordinated for retailers and commercial buyers.", established:"Established 1387", direct:"Direct farmer sourcing", cold:"Cold storage facilities", nationwide:"Nationwide delivery", catalogEyebrow:"Wholesale selection", catalogTitle:"Three premium varieties for your business", catalogText:"Pricing and availability are confirmed according to season and order volume.", available:"Available", requestPrice:"Request price", orderNow:"Order now", carton:"10 kg carton", basket:"9 kg basket", storyEyebrow:"Rooted in Sarchashma", storyTitle:"From farmer trust to buyer confidence", storyText:"Sarchashma Brothers has worked with local orchard farmers since 1387 SH. We source apples directly, grade, store, pack, and prepare them for Afghan markets and export inquiries.", years:"Years of experience", farmers:"Direct relationships", quality:"Grading & packing", deliveryTitle:"Direct Wholesale Delivery Across Afghanistan", deliveryText:"Free delivery is offered on eligible wholesale orders after destination, quantity, and delivery conditions are reviewed and confirmed.", eligible:"Subject to confirmed terms", formEyebrow:"No account required", formTitle:"Place your wholesale order", name:"Customer full name", phone:"Phone number", whatsapp:"WhatsApp number (optional)", province:"Province", city:"City / District", address:"Exact delivery address", variety:"Apple variety", packaging:"Packaging type", quantity:"Number of packages", weight:"Total weight", subtotal:"Product subtotal", notes:"Optional customer notes", submit:"Submit order", submitting:"Submitting…", success:"Your order was placed successfully", orderNumber:"Order number", saved:"The order is stored in our system. Our team will contact you to confirm price and delivery eligibility.", invalid:"Please complete all required fields correctly.", gallery:"From orchard to loading", facilities:"Real facilities, transparent handling", facilitiesText:"Farmer sourcing, grading, packaging, cold storage, warehousing, and organized loading.", markets:"Market experience and next destinations", previous:"Previous markets", targets:"Target markets", exportCta:"Export inquiry", contact:"Contact directly", footer:"Fresh Afghan apples for serious business.", details:"Product details", afn:"AFN", conditions:"Free delivery applies only after eligibility is confirmed." }
+};
+const provinces = ["Kabul","Maidan Wardak","Balkh","Jawzjan","Nangarhar","Nimroz","Herat","Kandahar","Ghazni","Bamyan","Other"];
 
-export default function Storefront({ initialProducts }: { initialProducts: Product[] }) {
-  const [menu, setMenu] = useState(false);
-  const [activeImage, setActiveImage] = useState<string | null>(null);
-  const heroRef = useRef<HTMLElement>(null);
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
-  const featureSectionRef = useRef<HTMLElement>(null);
-  const featureVideoRef = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add("visible");
-    }), { threshold: .12 });
-    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
-    const progress = () => {
-      document.documentElement.style.setProperty("--scroll", `${scrollY / (document.documentElement.scrollHeight - innerHeight) * 100}%`);
-      document.querySelector(".site-header")?.classList.toggle("is-scrolled", scrollY > 24);
-    };
-    const pointer = (event: PointerEvent) => {
-      document.documentElement.style.setProperty("--mouse-x", `${event.clientX}px`);
-      document.documentElement.style.setProperty("--mouse-y", `${event.clientY}px`);
-      const card = (event.target as Element).closest<HTMLElement>(".tilt");
-      if (!card || matchMedia("(pointer: coarse)").matches) return;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty("--tilt-x", `${((event.clientY - rect.top) / rect.height - .5) * -7}deg`);
-      card.style.setProperty("--tilt-y", `${((event.clientX - rect.left) / rect.width - .5) * 7}deg`);
-    };
-    const resetTilt = (event: PointerEvent) => {
-      const card = (event.target as Element).closest<HTMLElement>(".tilt");
-      if (!card || (event.relatedTarget instanceof Node && card.contains(event.relatedTarget))) return;
-      card.style.setProperty("--tilt-x", "0deg");
-      card.style.setProperty("--tilt-y", "0deg");
-    };
-    addEventListener("scroll", progress, { passive: true });
-    addEventListener("pointermove", pointer, { passive: true });
-    addEventListener("pointerout", resetTilt);
-    progress();
-    return () => {
-      observer.disconnect();
-      removeEventListener("scroll", progress);
-      removeEventListener("pointermove", pointer);
-      removeEventListener("pointerout", resetTilt);
-    };
-  }, []);
-  useEffect(() => {
-    const hero = heroRef.current;
-    const video = heroVideoRef.current;
-    if (!hero || !video) return;
-
-    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = matchMedia("(min-width: 921px)");
-    let frame = 0;
-    const syncVideo = () => {
-      frame = 0;
-      if (!desktop.matches || !video.duration || reducedMotion.matches) return;
-      const scrollRange = Math.max(hero.offsetHeight - innerHeight, 1);
-      const progress = Math.min(1, Math.max(0, -hero.getBoundingClientRect().top / scrollRange));
-      hero.style.setProperty("--hero-progress", String(progress));
-      hero.querySelector(".hero-copy")?.classList.toggle("is-exiting", progress > .48);
-      hero.querySelector(".hero-scroll-copy")?.classList.toggle("is-visible", progress > .48);
-      const targetTime = progress * Math.max(video.duration - 0.05, 0);
-      if (Math.abs(video.currentTime - targetTime) > 0.025) video.currentTime = targetTime;
-    };
-    const queueSync = () => {
-      if (!frame) frame = requestAnimationFrame(syncVideo);
-    };
-    const updatePlaybackMode = () => {
-      video.pause();
-      if (reducedMotion.matches) {
-        video.currentTime = 0;
-      } else if (desktop.matches) {
-        video.loop = false;
-        queueSync();
-      } else {
-        video.loop = true;
-        void video.play().catch(() => undefined);
-      }
-    };
-
-    video.addEventListener("loadedmetadata", queueSync);
-    addEventListener("scroll", queueSync, { passive: true });
-    addEventListener("resize", queueSync);
-    reducedMotion.addEventListener("change", updatePlaybackMode);
-    desktop.addEventListener("change", updatePlaybackMode);
-    updatePlaybackMode();
-    queueSync();
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      video.removeEventListener("loadedmetadata", queueSync);
-      removeEventListener("scroll", queueSync);
-      removeEventListener("resize", queueSync);
-      reducedMotion.removeEventListener("change", updatePlaybackMode);
-      desktop.removeEventListener("change", updatePlaybackMode);
-    };
-  }, []);
-  useEffect(() => {
-    const section = featureSectionRef.current;
-    const video = featureVideoRef.current;
-    if (!section || !video) return;
-    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-    const desktop = matchMedia("(min-width: 921px)");
-    let frame = 0;
-    const syncVideo = () => {
-      frame = 0;
-      if (!desktop.matches || !video.duration || reducedMotion.matches) return;
-      const scrollRange = Math.max(section.offsetHeight - innerHeight, 1);
-      const progress = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / scrollRange));
-      section.style.setProperty("--feature-progress", String(progress));
-      section.style.setProperty("--video-progress", `${progress * 100}%`);
-      section.querySelector(".video-feature-head")?.classList.toggle("is-exiting", progress > .42);
-      section.querySelector(".video-scroll-chapter")?.classList.toggle("is-visible", progress > .42);
-      const targetTime = progress * Math.max(video.duration - .05, 0);
-      if (Math.abs(video.currentTime - targetTime) > .025) video.currentTime = targetTime;
-    };
-    const queueSync = () => {
-      if (!frame) frame = requestAnimationFrame(syncVideo);
-    };
-    const updatePlaybackMode = () => {
-      video.pause();
-      if (reducedMotion.matches) {
-        video.currentTime = 0;
-      } else if (desktop.matches) {
-        video.loop = false;
-        queueSync();
-      } else {
-        video.loop = true;
-        void video.play().catch(() => undefined);
-      }
-    };
-    video.addEventListener("loadedmetadata", queueSync);
-    addEventListener("scroll", queueSync, { passive: true });
-    addEventListener("resize", queueSync);
-    reducedMotion.addEventListener("change", updatePlaybackMode);
-    desktop.addEventListener("change", updatePlaybackMode);
-    updatePlaybackMode();
-    queueSync();
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      video.removeEventListener("loadedmetadata", queueSync);
-      removeEventListener("scroll", queueSync);
-      removeEventListener("resize", queueSync);
-      reducedMotion.removeEventListener("change", updatePlaybackMode);
-      desktop.removeEventListener("change", updatePlaybackMode);
-    };
-  }, []);
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const d = new FormData(event.currentTarget);
-    const message = `سلام و وقت بخیر. برای خرید عمده از برادران سرچشمه درخواست دارم.\n\nنام خریدار: ${d.get("name")}\nشماره تماس: ${d.get("phone")}\nمحصول موردنظر: ${d.get("product")}\nمقدار تقریبی: ${d.get("amount") || "هنوز مشخص نشده"}\nمقصد ارسال: ${d.get("destination")}\nتوضیحات تکمیلی: ${d.get("details") || "توضیحی ثبت نشده است"}`;
-    window.open(waLink(message), "_blank", "noopener,noreferrer");
-  };
-  const galleries = [
-    { src: "/products/web/selected.jpg", title: "گلچین تازه از باغ" },
-    { src: "/products/web/packed.jpg", title: "آماده‌سازی منظم سفارش" },
-    { src: "/products/web/storage.jpg", title: "نگهداری تا زمان بارگیری" },
-    { src: "/products/web/wholesale.jpg", title: "محصول آمادهٔ عرضه عمده" }
-  ];
-  return <>
-    <div className="scroll-progress" />
-    <header className="site-header"><div className="container header-inner">
-      <a className="brand" href="#top"><img src="/brand/logo.jpeg" alt="نشان تجارت‌خانه برادران سرچشمه" /><div><strong>برادران سرچشمه</strong><small>ریشه در باغ · استوار بر اعتماد</small></div></a>
-      <button className="menu-button" aria-expanded={menu} aria-label="باز کردن فهرست سایت" onClick={() => setMenu(v => !v)}>{menu ? "×" : "☰"}</button>
-      <nav className={menu ? "open" : ""} onClick={() => setMenu(false)}><a href="#products">محصولات</a><a href="#story">داستان ما</a><a href="#gallery">نگارخانه</a><a href="#contact">ارتباط با ما</a><a className="nav-cta" href="#order">ثبت سفارش عمده</a></nav>
-    </div></header>
-
+export default function Storefront({ initialProducts, settings }: { initialProducts: Product[]; settings: SiteSettings }) {
+  const [locale, setLocale] = useState<Locale>("fa"); const [menu, setMenu] = useState(false); const [result, setResult] = useState<{orderNumber:string;totalWeightKg:number;subtotalAfn:number|null}|null>(null); const [error, setError] = useState(""); const [submitting, setSubmitting] = useState(false); const [productId, setProductId] = useState(initialProducts[0]?.id || ""); const [packageId, setPackageId] = useState<"carton"|"basket">("carton"); const [quantity, setQuantity] = useState(1);
+  const t = copy[locale]; const product = initialProducts.find(p => p.id === productId) || initialProducts[0]; const pack = product?.packages.find(p => p.id === packageId) || product?.packages[0]; const direction = locale === "en" ? "ltr" : "rtl"; const total = (pack?.weightKg || 0) * quantity; const subtotal = pack?.priceAfn == null ? null : pack.priceAfn * quantity;
+  useEffect(() => { const saved = localStorage.getItem("sb_locale") as Locale | null; if (saved && copy[saved]) setLocale(saved); if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => undefined); }, []);
+  const chooseLocale = (value: Locale) => { setLocale(value); localStorage.setItem("sb_locale", value); };
+  const whatsappMessage = useMemo(() => product && pack ? `Sarchashma Brothers wholesale inquiry%0AApple: ${encodeURIComponent(product.name.en)}%0APackage: ${encodeURIComponent(pack.label.en)}%0AQuantity: ${quantity}%0ATotal weight: ${total} kg` : "", [product, pack, quantity, total]);
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setSubmitting(true); setError(""); setResult(null); const form = new FormData(event.currentTarget); const response = await fetch("/api/orders", { method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(Object.fromEntries(form)) }); const body = await response.json(); setSubmitting(false); if (!response.ok) return setError(body.error || t.invalid); setResult(body); event.currentTarget.reset(); setQuantity(1); }
+  return <div dir={direction} lang={locale}>
+    <header className="topbar"><a className="brand" href="#top"><img src="/brand/logo.png" alt="Sarchashma Brothers"/><span><b>{locale === "en" ? "Sarchashma Brothers" : "براداران سرچشمه"}</b><small>{locale === "en" ? "Afghan apple specialists" : "سیب تازه افغانستان"}</small></span></a><button className="menu-toggle" onClick={() => setMenu(!menu)} aria-label="Menu">☰</button><nav className={menu ? "open" : ""}><a href="#products">{t.navProducts}</a><a href="#story">{t.navStory}</a><a href="#delivery">{t.navDelivery}</a><a href="/facilities">{t.navFacilities}</a><a href="/exports">{t.navExport}</a></nav><div className="language-switch" aria-label="Language"><button className={locale==="fa"?"active":""} onClick={()=>chooseLocale("fa")}>دری</button><button className={locale==="ps"?"active":""} onClick={()=>chooseLocale("ps")}>پښتو</button><button className={locale==="en"?"active":""} onClick={()=>chooseLocale("en")}>EN</button></div><a className="header-cta" href="#order">{t.order}</a></header>
     <main id="top">
-      <section className="hero" ref={heroRef}>
-        <div className="hero-noise" />
-        <div className="hero-orbit one" /><div className="hero-orbit two" />
-        <div className="container hero-grid">
-          <div className="hero-copy reveal">
-            <div className="kicker">از قلب باغ‌های درهٔ سرچشمه، میدان وردک</div>
-            <h1>تازگیِ باغ،<br /><em>پشتوانهٔ تجارت شما</em></h1>
-            <p>سیب‌های سرخ و زرد را از باغ‌های خودمان گلچین می‌کنیم و برای سفارش‌های عمده در افغانستان و بازارهای بیرون از کشور آماده می‌سازیم.</p>
-            <div className="hero-actions"><a className="button primary" href="#products">مشاهده محصولات <span>←</span></a><a className="button ghost" href={waLink("سلام و وقت بخیر. برای خرید عمده سیب از برادران سرچشمه معلومات می‌خواهم.")} target="_blank">مشاوره در واتس‌اپ</a></div>
-            <div className="hero-facts"><span><b>از ۱۳۸۷</b> تجربه و اعتماد</span><span><b>فروش عمده</b> تخصص ما</span><span><b>۵ صبح تا ۱۰ شب</b> پاسخ‌گوی شما</span></div>
-          </div>
-          <div className="hero-scroll-copy">
-            <span>محصول واقعی، مستقیم از باغ</span>
-            <h2>هر فریم، روایتِ<br />تازگی و کیفیت</h2>
-            <p>ادامه دهید و محصولی را ببینید که برای تجارت شما آماده شده است.</p>
-          </div>
-          <div className="hero-visual reveal">
-            <div className="hero-image hero-video-shell"><video ref={heroVideoRef} src="/media/hero-scroll.mp4" poster="/products/web/super-lux.jpg" muted playsInline preload="auto" aria-label="ویدیوی معرفی محصولات باغی برادران سرچشمه" /></div>
-            <div className="hero-image"><img src="/products/web/super-lux.jpg" alt="سیب سرخ سوپر لوکس برادران سرچشمه" /></div>
-            <div className="brand-seal"><img src="/brand/logo.jpeg" alt="" /></div>
-            <div className="float-card"><span>از باغ‌های خودمان</span><strong>تازه، گلچین‌شده، آمادهٔ سفارش</strong></div>
-          </div>
-        </div>
-        <a className="scroll-cue" href="#products"><span>محصولات را ببینید</span><i /></a>
-      </section>
+      <section className="hero-premium"><video autoPlay muted loop playsInline poster="/products/web/wholesale.jpg"><source src="/media/hero-scroll.mp4" type="video/mp4"/></video><div className="hero-shade"/><div className="hero-content"><span className="hero-kicker">{t.kicker}</span><h1>{settings.homepageHeadline?.[locale] || t.title}</h1><p>{settings.homepageIntro?.[locale] || t.intro}</p><div className="hero-buttons"><a className="btn btn-red" href="#order">{t.order} <i>↗</i></a><a className="btn btn-glass" href="#products">{t.explore}</a></div></div><div className="trust-bar"><span><i>۱۳۸۷</i>{t.established}</span><span><i>◎</i>{t.direct}</span><span><i>❄</i>{t.cold}</span><span><i>◇</i>{t.nationwide}</span></div></section>
 
-      <section className="products section" id="products"><div className="container">
-        <div className="section-head reveal"><div><span className="eyebrow">محصولات برادران سرچشمه</span><h2>برای هر بازار، انتخابی شایسته</h2></div><p>قیمت روز هر محصول با توجه به مقدار سفارش، نوع بسته‌بندی و مقصد ارسال برای شما محاسبه می‌شود.</p></div>
-        <div className="product-grid">{initialProducts.map((product, i) => <article className="product-card reveal tilt" style={{ transitionDelay: `${i * 90}ms` }} key={product.id}>
-          <div className="product-photo"><img src={product.image} alt={product.name} /><span>{product.badge}</span></div>
-          <div className="product-body"><small>محصول باغی برادران سرچشمه</small><h3>{product.name}</h3><p>{product.short}</p><div className="product-price">{product.price}</div>
-          <a href={waLink(`سلام و وقت بخیر. برای خرید عمده «${product.name}» و دریافت قیمت روز معلومات می‌خواهم.`)} target="_blank">دریافت قیمت و ثبت سفارش <span>←</span></a></div>
-        </article>)}</div>
-      </div></section>
+      <section className="section products" id="products"><div className="wrap"><div className="section-heading"><div><span>{t.catalogEyebrow}</span><h2>{t.catalogTitle}</h2></div><p>{t.catalogText}</p></div><div className="product-grid">{initialProducts.map((item, index) => <article className="product-card" key={item.id}><div className="product-image"><img src={item.image} alt={item.name[locale]}/><em>0{index+1}</em><span>{t.available}</span></div><div className="product-info"><small>{item.name.fa} · {item.name.ps}</small><h3>{item.name[locale]}</h3><p>{item.description[locale]}</p><div className="package-row">{item.packages.map(option=><span key={option.id}>{option.weightKg} kg · {option.label[locale]}</span>)}</div><div className="product-bottom"><b>{item.packages.some(p=>p.priceAfn!==null) ? `${Math.min(...item.packages.filter(p=>p.priceAfn!==null).map(p=>p.priceAfn!))} ${t.afn}` : t.requestPrice}</b><div><a href={`/products/${item.slug}`}>{t.details}</a><button onClick={()=>{setProductId(item.id);document.getElementById("order")?.scrollIntoView()}}>{t.orderNow} ↗</button></div></div></div></article>)}</div></div></section>
 
-      <section className="story section" id="story"><div className="container story-grid">
-        <div className="story-collage reveal"><img className="story-main" src="/products/web/wholesale.jpg" alt="سیب‌های تازه باغی برای سفارش عمده" /><img className="story-small" src="/products/web/storage.jpg" alt="صندوق‌های محصول آمادهٔ بارگیری" /><div className="experience"><b>از ۱۳۸۷</b><span>همراه مطمئن تجارت میوه</span></div><span className="story-line" aria-hidden="true" /></div>
-        <div className="story-copy reveal"><span className="eyebrow">داستان برادران سرچشمه</span><h2>ریشه در سرچشمه، همراهِ تجارت شما</h2><p>تجارت‌خانه برادران سرچشمه از ۱۵ قوس ۱۳۸۷ در ولسوالی جلریز ولایت میدان وردک فعالیت می‌کند. سیب‌های ما در باغ‌های درهٔ سرچشمه پرورش می‌یابند، با دقت گلچین می‌شوند و برای فروش عمده آماده می‌گردند.</p><p>ما کیفیت محصول را از باغ تا زمان تحویل دنبال می‌کنیم تا تاجران و خریداران عمده، همکاری روشن، منظم و قابل اعتماد را تجربه کنند.</p>
-        <div className="values"><div><b>گلچین دقیق</b><span>انتخاب محصول مناسب</span></div><div><b>آماده‌سازی منظم</b><span>متناسب با سفارش شما</span></div><div><b>هماهنگی ارسال</b><span>برای داخل و خارج کشور</span></div></div></div>
-      </div></section>
+      <section className="story section" id="story"><div className="wrap story-grid"><div className="story-media"><img className="story-main" src="/products/web/selected.jpg" alt="Apple grading"/><img className="story-logo" src="/brand/logo.png" alt=""/></div><div className="story-copy"><span className="eyebrow">{t.storyEyebrow}</span><h2>{t.storyTitle}</h2><p>{t.storyText}</p><div className="story-points"><span><b>۱۳۸۷</b>{t.established}</span><span><b>100%</b>{t.farmers}</span><span><b>10 / 9 kg</b>{t.quality}</span></div><a className="text-link" href="/facilities">{t.navFacilities} ↗</a></div></div></section>
 
-      <section className="video-feature section" id="video" ref={featureSectionRef}>
-        <div className="video-marquee" aria-hidden="true"><div>تازه از باغ · گلچین با دقت · آماده برای تجارت · اعتماد در همکاری · تازه از باغ · گلچین با دقت · آماده برای تجارت · اعتماد در همکاری ·</div></div>
-        <div className="video-feature-sticky"><div className="container">
-        <div className="video-feature-head reveal">
-          <span className="eyebrow">از باغ تا بازار شما</span>
-          <h2>تازگی را ببینید؛ کیفیت را انتخاب کنید</h2>
-          <p>نگاهی نزدیک به محصول واقعی و روند آماده‌سازی آن برای سفارش‌های عمده.</p>
-        </div>
-        <div className="video-feature-frame reveal tilt">
-          <video ref={featureVideoRef} src="/media/orchard-showcase.mp4" poster="/products/web/wholesale.jpg" muted playsInline preload="auto" aria-label="ویدیوی محصول تازه و آماده‌سازی سفارش در برادران سرچشمه" />
-          <div className="video-vignette" />
-          <span className="video-feature-label">برادران سرچشمه · تازگی از دل باغ</span>
-          <div className="video-controls"><div className="video-progress"><i /></div><span>برای ادامهٔ روایت، اسکرول کنید</span></div>
-        </div>
-        <div className="video-scroll-chapter"><span>پیش از انتخاب، از نزدیک ببینید</span><h3>رنگ، تازگی و کیفیت؛<br />همان‌گونه که هست</h3><p>تصویری روشن از محصولی که برای سفارش عمدهٔ شما آماده می‌شود.</p></div>
-        <div className="video-feature-stats reveal"><span><i>01</i><b>مستقیم از باغ</b></span><span><i>02</i><b>تصاویر واقعی محصول</b></span><span><i>03</i><b>آماده برای سفارش عمده</b></span></div>
-      </div></div></section>
+      <section className="section delivery" id="delivery"><div className="wrap"><div className="delivery-head"><span>AFGHANISTAN / 34 PROVINCES</span><h2>{t.deliveryTitle}</h2><p>{t.deliveryText}</p></div><div className="route-strip">{["Kabul","Mazar-e-Sharif","Sheberghan","Jalalabad","Zaranj","Other provinces"].map((city,i)=><span key={city}><i>{String(i+1).padStart(2,"0")}</i>{city}<small>{t.eligible}</small></span>)}</div><p className="condition-note">ⓘ {t.conditions}</p></div></section>
 
-      <section className="gallery section" id="gallery"><div className="container">
-        <div className="section-head reveal"><div><span className="eyebrow">نگارخانهٔ سرچشمه</span><h2>آنچه می‌بینید، محصول واقعی ماست</h2></div><p>نگاهی بی‌واسطه به محصولات، بسته‌بندی و فضای آماده‌سازی سفارش‌ها در تجارت‌خانه.</p></div>
-        <div className="gallery-grid">{galleries.map((item, i) => <button className={`gallery-item g${i + 1} reveal tilt`} key={item.src} onClick={() => setActiveImage(item.src)}><img src={item.src} alt={item.title} /><span>{item.title}<i>↗</i></span></button>)}</div>
-      </div></section>
+      <section className="facilities-preview section"><div className="wrap"><div className="section-heading light"><div><span>{t.gallery}</span><h2>{t.facilities}</h2></div><p>{t.facilitiesText}</p></div><div className="mosaic">{settings.gallery.map((item,i)=><figure key={item.src} className={`tile tile-${i+1}`}><img src={item.src} alt={item.alt[locale]}/><figcaption>{item.alt[locale]}</figcaption></figure>)}</div></div></section>
 
-      <section className="order section" id="order"><div className="container order-shell">
-        <div className="order-copy reveal"><span className="eyebrow">شروع یک همکاری مطمئن</span><h2>سفارش عمدهٔ شما، تنها چند قدم فاصله دارد</h2><p>مشخصات درخواست خود را وارد کنید؛ پیام آماده در واتس‌اپ باز می‌شود تا قیمت روز، بسته‌بندی و ارسال را مستقیم با ما هماهنگ کنید.</p><div className="contact-pills"><a href="tel:+93707763729">+93 70 776 3729</a><a href="tel:+93706446080">+93 70 644 6080</a></div></div>
-        <form className="order-form reveal" onSubmit={submit}>
-          <label>نام خریدار<input name="name" required placeholder="نام و نام خانوادگی شما" /></label>
-          <label>شماره تماس<input name="phone" required type="tel" placeholder="شماره‌ای که پاسخ‌گو هستید" /></label>
-          <label>محصول موردنظر<select name="product">{initialProducts.map(p => <option key={p.id}>{p.name}</option>)}</select></label>
-          <label>مقدار تقریبی سفارش<input name="amount" placeholder="برای نمونه: ۱۰۰ صندوق" /></label>
-          <label className="wide">مقصد ارسال<input name="destination" required placeholder="ولایت، شهر یا کشور مقصد" /></label>
-          <label className="wide">جزئیات سفارش<textarea name="details" placeholder="نوع بسته‌بندی، زمان موردنظر یا هر توضیح دیگر" /></label>
-          <button className="button primary wide" type="submit">ارسال درخواست در واتس‌اپ <span>←</span></button>
-        </form>
-      </div></section>
+      <section className="section markets"><div className="wrap markets-grid"><div><span className="eyebrow">B2B / EXPORT</span><h2>{t.markets}</h2><a className="btn btn-dark" href="/exports">{t.exportCta} ↗</a></div><div className="market-list"><div><small>{t.previous}</small>{settings.previousMarkets.map(x=><span key={x}>{x}</span>)}</div><div className="target"><small>{t.targets}</small>{settings.targetMarkets.map(x=><span key={x}>{x}</span>)}</div></div></div></section>
 
-      <section className="contact section" id="contact"><div className="container contact-grid">
-        <div className="contact-copy reveal"><span className="eyebrow">در تماس باشیم</span><h2>برای یک همکاری پربار، با ما گفت‌وگو کنید</h2><p>هر روز از ساعت ۵ صبح تا ۱۰ شب آمادهٔ پاسخ‌گویی و هماهنگی سفارش شما هستیم.</p></div>
-        <div className="contact-list reveal"><a href="https://maps.google.com/?q=Jalrez+Maidan+Wardak+Afghanistan" target="_blank"><span>نشانی تجارت‌خانه</span><b>افغانستان، میدان وردک، جلریز، سرچشمه، قلعه سبز</b></a><a href="mailto:rohullahr914@gmail.com"><span>ارتباط از طریق ایمیل</span><b dir="ltr">rohullahr914@gmail.com</b></a><a href={waLink("سلام و وقت بخیر. می‌خواهم با برادران سرچشمه در ارتباط باشم.")} target="_blank"><span>گفت‌وگوی مستقیم در واتس‌اپ</span><b dir="ltr">+93 70 776 3729</b></a></div>
-      </div></section>
+      <section className="order-section section" id="order"><div className="wrap order-panel"><div className="order-intro"><span>{t.formEyebrow}</span><h2>{t.formTitle}</h2><p>{t.catalogText}</p><div className="live-total"><small>{t.weight}</small><b>{total.toLocaleString()} kg</b><small>{t.subtotal}</small><b>{subtotal === null ? t.requestPrice : `${subtotal.toLocaleString()} ${t.afn}`}</b></div></div><form onSubmit={submit} className="real-order-form"><label>{t.name}<input name="customerName" required maxLength={100}/></label><label>{t.phone}<input name="phone" type="tel" required pattern="[+0-9 ()-]{7,20}" dir="ltr"/></label><label>{t.whatsapp}<input name="whatsapp" type="tel" dir="ltr"/></label><label>{t.province}<select name="province" required defaultValue=""><option value="" disabled>—</option>{provinces.map(x=><option key={x}>{x}</option>)}</select></label><label>{t.city}<input name="city" required/></label><label>{t.address}<input name="address" required/></label><label>{t.variety}<select name="productId" value={productId} onChange={e=>setProductId(e.target.value)}>{initialProducts.map(item=><option value={item.id} key={item.id}>{item.name[locale]}</option>)}</select></label><label>{t.packaging}<select name="packageId" value={packageId} onChange={e=>setPackageId(e.target.value as "carton"|"basket")}>{product?.packages.map(item=><option value={item.id} key={item.id}>{item.label[locale]}</option>)}</select></label><label>{t.quantity}<input name="quantity" type="number" min="1" max="100000" value={quantity} onChange={e=>setQuantity(Math.max(1,Number(e.target.value)))} required/></label><label className="full">{t.notes}<textarea name="notes" maxLength={1000}/></label>{error&&<p className="form-error full">{error}</p>}{result&&<div className="order-success full"><b>✓ {t.success}</b><strong>{t.orderNumber}: {result.orderNumber}</strong><p>{t.saved}</p></div>}<button className="btn btn-red full" disabled={submitting}>{submitting?t.submitting:t.submit} ↗</button></form></div></section>
     </main>
-
-    <footer><div className="container footer-inner"><div className="footer-brand"><img src="/brand/logo.jpeg" alt="" /><div><b>برادران سرچشمه</b><small>تازگی · اعتماد · همکاری</small></div></div><p>© ۱۴۰۵ — همهٔ حقوق برای برادران سرچشمه محفوظ است.</p><a href="/admin">ورود به بخش مدیریت</a></div></footer>
-    <a className="whatsapp-float" href={waLink("سلام و وقت بخیر. برای خرید عمده سیب و دریافت قیمت روز معلومات می‌خواهم.")} target="_blank" aria-label="گفت‌وگو با برادران سرچشمه در واتس‌اپ">گفت‌وگو در واتس‌اپ <span>●</span></a>
-    {activeImage && <div className="lightbox" onClick={() => setActiveImage(null)}><button aria-label="بستن تصویر">×</button><img src={activeImage} alt="نمای بزرگ محصول برادران سرچشمه" /></div>}
-  </>;
+    <footer><div className="wrap footer-grid"><div className="footer-brand"><img src="/brand/logo.png" alt="Sarchashma Brothers"/><div><b>براداران سرچشمه</b><span>SARCHASHMA BROTHERS</span></div></div><p>{t.footer}</p><div className="footer-links"><a href={`tel:${settings.phone}`}>{settings.phone}</a><a href={`mailto:${settings.email}`}>{settings.email}</a><a href="/admin">Admin</a></div></div></footer>
+    {settings.whatsapp && <a className="whatsapp" target="_blank" rel="noreferrer" href={`https://wa.me/${settings.whatsapp.replace(/\D/g,"")}?text=${whatsappMessage}`} aria-label="WhatsApp">◉ <span>WhatsApp</span></a>}
+  </div>;
 }

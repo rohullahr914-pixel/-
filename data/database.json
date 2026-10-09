@@ -1,0 +1,56 @@
+{
+  "products": [
+    {
+      "id": "red-malang", "slug": "red-malang-apples", "image": "/products/web/premium.jpg", "available": true,
+      "name": { "fa": "سیب سرخ مالنگ", "ps": "سره مالنګ مڼې", "en": "Red Malang Apples" },
+      "description": { "fa": "سیب سرخ خوش‌رنگ و سفت، تهیه‌شده مستقیم از باغداران محلی برای عرضه عمده.", "ps": "ښکلې او کلکې سرې مڼې، د عمده پلور لپاره مستقیم له ځايي بڼوالو څخه.", "en": "Vibrant, firm red apples sourced directly from local orchard farmers for wholesale supply." },
+      "quantityLabel": { "fa": "موجود برای سفارش عمده", "ps": "د عمده فرمایش لپاره شته", "en": "Available for wholesale" },
+      "packages": [
+        { "id": "carton", "label": { "fa": "کارتن ۱۰ کیلوگرمی", "ps": "۱۰ کیلو کارتن", "en": "10 kg carton" }, "weightKg": 10, "priceAfn": null },
+        { "id": "basket", "label": { "fa": "سبد ۹ کیلوگرمی", "ps": "۹ کیلو ټوکرۍ", "en": "9 kg basket" }, "weightKg": 9, "priceAfn": null }
+      ]
+    },
+    {
+      "id": "red-beiruti", "slug": "red-beiruti-apples", "image": "/products/web/super-lux.jpg", "available": true,
+      "name": { "fa": "سیب سرخ بیروتی", "ps": "سره بیروتي مڼې", "en": "Red Beiruti Apples" },
+      "description": { "fa": "سیب تازه و یک‌دست با ظاهر ممتاز، مناسب فروشگاه‌ها و خریداران عمده.", "ps": "تازه او یوشان مڼې، د پلورنځیو او عمده پېرودونکو لپاره مناسبې.", "en": "Fresh, consistent apples with a premium appearance for retailers and wholesale buyers." },
+      "quantityLabel": { "fa": "موجود برای سفارش عمده", "ps": "د عمده فرمایش لپاره شته", "en": "Available for wholesale" },
+      "packages": [
+        { "id": "carton", "label": { "fa": "کارتن ۱۰ کیلوگرمی", "ps": "۱۰ کیلو کارتن", "en": "10 kg carton" }, "weightKg": 10, "priceAfn": null },
+        { "id": "basket", "label": { "fa": "سبد ۹ کیلوگرمی", "ps": "۹ کیلو ټوکرۍ", "en": "9 kg basket" }, "weightKg": 9, "priceAfn": null }
+      ]
+    },
+    {
+      "id": "yellow", "slug": "yellow-apples", "image": "/products/web/yellow-apple.jpg", "available": true,
+      "name": { "fa": "سیب زرد", "ps": "ژېړې مڼې", "en": "Yellow Apples" },
+      "description": { "fa": "سیب زرد تازه از باغ‌های سرچشمه، سورت‌شده برای سفارش‌های تجارتی.", "ps": "د سرچشمې له بڼونو تازه ژېړې مڼې، د سوداګریزو فرمایشونو لپاره درجه بندي شوې.", "en": "Fresh yellow apples from Sarchashma orchards, graded for commercial orders." },
+      "quantityLabel": { "fa": "موجود برای سفارش عمده", "ps": "د عمده فرمایش لپاره شته", "en": "Available for wholesale" },
+      "packages": [
+        { "id": "carton", "label": { "fa": "کارتن ۱۰ کیلوگرمی", "ps": "۱۰ کیلو کارتن", "en": "10 kg carton" }, "weightKg": 10, "priceAfn": null },
+        { "id": "basket", "label": { "fa": "سبد ۹ کیلوگرمی", "ps": "۹ کیلو ټوکرۍ", "en": "9 kg basket" }, "weightKg": 9, "priceAfn": null }
+      ]
+    }
+  ],
+  "orders": [],
+  "exportInquiries": [],
+  "settings": {
+    "phone": "+93 70 776 3729", "whatsapp": "+93707763729", "email": "rohullahr914@gmail.com",
+    "address": { "fa": "قلعه سبز، سرچشمه، ولسوالی جلریز، میدان وردک، افغانستان", "ps": "قلعه سبز، سرچشمه، جلرېز ولسوالۍ، میدان وردګ، افغانستان", "en": "Qala Sabz, Sarchashma, Jalrez District, Maidan Wardak, Afghanistan" },
+    "homepageHeadline": { "fa": "سیب تازه و باکیفیت افغانستان، مستقیم به تجارت شما", "ps": "د افغانستان تازه او باکیفیته مڼې، مستقیم ستاسو سوداګرۍ ته", "en": "Premium Afghan Apples, Direct to Your Business" },
+    "homepageIntro": { "fa": "سیب‌های عمده سرچشمه، تهیه‌شده مستقیم از باغداران محلی، با بسته‌بندی مطمئن و تحویل هماهنگ‌شده برای فروشگاه‌ها و خریداران تجارتی.", "ps": "د سرچشمې عمده مڼې، مستقیم له ځايي بڼوالو، خوندي بسته بندي او همغږې سپارنې سره د پلورنځیو او سوداګریزو پېرودونکو لپاره.", "en": "Wholesale apples from Sarchashma, sourced directly from local farmers, carefully packed, stored, and coordinated for retailers and commercial buyers." },
+    "deliveryRules": [
+      { "province": "Kabul", "available": true, "minimumQuantity": null, "conditions": "Eligibility is confirmed after order review.", "estimatedTime": "Confirmed with the buyer" },
+      { "province": "Balkh", "available": true, "minimumQuantity": null, "conditions": "Eligibility is confirmed after order review.", "estimatedTime": "Confirmed with the buyer" },
+      { "province": "Nangarhar", "available": true, "minimumQuantity": null, "conditions": "Eligibility is confirmed after order review.", "estimatedTime": "Confirmed with the buyer" },
+      { "province": "Nimroz", "available": true, "minimumQuantity": null, "conditions": "Eligibility is confirmed after order review.", "estimatedTime": "Confirmed with the buyer" }
+    ],
+    "previousMarkets": ["India", "Uzbekistan", "Pakistan (historical, currently inactive)"],
+    "targetMarkets": ["UAE", "China", "Oman", "Saudi Arabia"],
+    "gallery": [
+      { "src": "/products/web/wholesale.jpg", "alt": { "fa": "سیب تازه باغ", "ps": "تازه بڼ مڼې", "en": "Fresh orchard apples" } },
+      { "src": "/products/web/packed.jpg", "alt": { "fa": "بسته‌بندی سیب", "ps": "د مڼو بسته بندي", "en": "Apple packaging" } },
+      { "src": "/products/web/storage.jpg", "alt": { "fa": "ذخیره‌سازی محصول", "ps": "د محصول زېرمه", "en": "Produce storage" } },
+      { "src": "/products/web/selected.jpg", "alt": { "fa": "سورت سیب", "ps": "د مڼو درجه بندي", "en": "Apple grading" } }
+    ]
+  }
+}
