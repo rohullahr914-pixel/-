@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,5 +15,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#0b3325", width: "device-width", initialScale: 1 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const structured = { "@context":"https://schema.org", "@type":"Organization", name:"Sarchashma Brothers", alternateName:"براداران سرچشمه", foundingDate:"1387 SH", address:{ "@type":"PostalAddress", addressLocality:"Sarchashma, Jalrez District", addressRegion:"Maidan Wardak", addressCountry:"AF" }, logo:"/brand/logo.png" };
-  return <html lang="fa" dir="rtl"><body>{children}<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(structured)}}/></body></html>;
+  return <html lang="fa" dir="rtl"><body>{children}<MobileBottomNav/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(structured)}}/></body></html>;
 }
