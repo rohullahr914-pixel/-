@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Apple, BookOpen, Building2, House, Truck } from "lucide-react";
+import { Apple, Building2, Globe2, House, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Locale } from "@/lib/types";
 
 const labels = {
-  fa: { home: "خانه", products: "محصولات", shipping: "ارسال", facilities: "تأسیسات", about: "درباره ما" },
-  ps: { home: "کور", products: "محصولات", shipping: "سپارنه", facilities: "تاسیسات", about: "زموږ په اړه" },
-  en: { home: "Home", products: "Products", shipping: "Shipping", facilities: "Facilities", about: "About us" },
+  fa: { home: "خانه", products: "محصولات", shipping: "ارسال", facilities: "تأسیسات", exports: "صادرات" },
+  ps: { home: "کور", products: "محصولات", shipping: "سپارنه", facilities: "تاسیسات", exports: "صادرات" },
+  en: { home: "Home", products: "Products", shipping: "Shipping", facilities: "Facilities", exports: "Exports" },
 };
 
 type NavKey = keyof typeof labels.en;
@@ -19,11 +19,12 @@ const items = [
   { key: "products" as const, href: "/#products", icon: Apple },
   { key: "shipping" as const, href: "/#delivery", icon: Truck },
   { key: "facilities" as const, href: "/facilities", icon: Building2 },
-  { key: "about" as const, href: "/#story", icon: BookOpen },
+  { key: "exports" as const, href: "/exports", icon: Globe2 },
 ];
 
 function activeForPath(pathname: string): NavKey {
   if (pathname === "/facilities") return "facilities";
+  if (pathname === "/exports") return "exports";
   if (pathname.startsWith("/products/")) return "products";
   return "home";
 }
@@ -55,12 +56,11 @@ export default function MobileBottomNav() {
       const hash = window.location.hash.slice(1);
       if (hash === "products") setActive("products");
       else if (hash === "delivery") setActive("shipping");
-      else if (hash === "story") setActive("about");
       else setActive("home");
     };
     updateFromHash();
 
-    const sections = ["products", "delivery", "story"]
+    const sections = ["products", "delivery"]
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
     const observer = new IntersectionObserver(
@@ -69,7 +69,7 @@ export default function MobileBottomNav() {
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (!visible) return;
-        setActive(visible.target.id === "delivery" ? "shipping" : visible.target.id === "story" ? "about" : "products");
+        setActive(visible.target.id === "delivery" ? "shipping" : "products");
       },
       { rootMargin: "-25% 0px -60%", threshold: [0, 0.1, 0.25] },
     );

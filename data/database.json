@@ -29,6 +29,26 @@
         { "id": "carton", "label": { "fa": "کارتن ۱۰ کیلوگرمی", "ps": "۱۰ کیلو کارتن", "en": "10 kg carton" }, "weightKg": 10, "priceAfn": null },
         { "id": "basket", "label": { "fa": "سبد ۹ کیلوگرمی", "ps": "۹ کیلو ټوکرۍ", "en": "9 kg basket" }, "weightKg": 9, "priceAfn": null }
       ]
+    },
+    {
+      "id": "selected-red", "slug": "selected-red-apples", "image": "/products/web/selected-red-apples.jpeg", "available": true,
+      "name": { "fa": "سیب سرخ گلچین", "ps": "غوره شوې سرې مڼې", "en": "Selected Red Apples" },
+      "description": { "fa": "سیب سرخ گلچین‌شده با ظاهر آراسته برای سفارش‌های عمده، فروشگاهی و بسته‌بندی سفارشی.", "ps": "غوره شوې سرې مڼې په ښکلې بڼه، د عمده فرمایشونو، پلورنځیو او ځانګړې بسته‌بندۍ لپاره.", "en": "Selected red apples with a polished presentation for wholesale, retail, and custom packing inquiries." },
+      "quantityLabel": { "fa": "موجود برای سفارش عمده", "ps": "د عمده فرمایش لپاره شته", "en": "Available for wholesale" },
+      "packages": [
+        { "id": "carton", "label": { "fa": "کارتن ۱۰ کیلوگرمی", "ps": "۱۰ کیلو کارتن", "en": "10 kg carton" }, "weightKg": 10, "priceAfn": null },
+        { "id": "basket", "label": { "fa": "سبد ۹ کیلوگرمی", "ps": "۹ کیلو ټوکرۍ", "en": "9 kg basket" }, "weightKg": 9, "priceAfn": null }
+      ]
+    },
+    {
+      "id": "premium-yellow", "slug": "premium-yellow-apples", "image": "/products/web/premium-yellow-apples.jpeg", "available": true,
+      "name": { "fa": "سیب زرد ممتاز", "ps": "ممتازې ژېړې مڼې", "en": "Premium Yellow Apples" },
+      "description": { "fa": "سیب زرد خوش‌رنگ و گلچین‌شده برای سفارش‌های تجارتی؛ مقدار، بسته‌بندی و ارسال براساس نیاز خریدار هماهنگ می‌شود.", "ps": "ښکلې او غوره شوې ژېړې مڼې د سوداګریزو فرمایشونو لپاره؛ مقدار، بسته‌بندي او سپارنه د پېرودونکي له اړتیا سره همغږي کېږي.", "en": "Selected yellow apples for commercial orders, with quantity, packaging, and delivery coordinated to buyer requirements." },
+      "quantityLabel": { "fa": "موجود برای سفارش عمده", "ps": "د عمده فرمایش لپاره شته", "en": "Available for wholesale" },
+      "packages": [
+        { "id": "carton", "label": { "fa": "کارتن ۱۰ کیلوگرمی", "ps": "۱۰ کیلو کارتن", "en": "10 kg carton" }, "weightKg": 10, "priceAfn": null },
+        { "id": "basket", "label": { "fa": "سبد ۹ کیلوگرمی", "ps": "۹ کیلو ټوکرۍ", "en": "9 kg basket" }, "weightKg": 9, "priceAfn": null }
+      ]
     }
   ],
   "orders": [],
