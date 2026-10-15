@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { Locale } from "@/lib/types";
 
@@ -24,5 +25,5 @@ export default function PageHeader() {
   };
   const t = headerCopy[locale];
 
-  return <header className="topbar page-topbar" dir={locale === "en" ? "ltr" : "rtl"}><a className="brand" href="/"><img src="/brand/logo.png" alt="Sarchashma Brothers"/><span><b>{locale === "en" ? "Sarchashma Brothers" : "براداران سرچشمه"}</b><small>SARCHASHMA BROTHERS</small></span></a><nav><a href="/#products">{t.products}</a><a href="/facilities" className={pathname === "/facilities" ? "active" : undefined} aria-current={pathname === "/facilities" ? "page" : undefined}>{t.facilities}</a><a href="/exports" className={pathname === "/exports" ? "active" : undefined} aria-current={pathname === "/exports" ? "page" : undefined}>{t.exports}</a><a href="/#order">{t.order}</a></nav><div className="language-switch" aria-label="Language"><button className={locale === "fa" ? "active" : ""} onClick={() => chooseLocale("fa")}>دری</button><button className={locale === "ps" ? "active" : ""} onClick={() => chooseLocale("ps")}>پښتو</button><button className={locale === "en" ? "active" : ""} onClick={() => chooseLocale("en")}>EN</button></div><a className="header-cta" href="/#order">{t.wholesale}</a></header>;
+  return <header className="topbar page-topbar" dir={locale === "en" ? "ltr" : "rtl"}><a className="brand" href="/"><Image src="/brand/logo.webp" width={64} height={64} quality={80} priority alt="Sarchashma Brothers"/><span><b>{locale === "en" ? "Sarchashma Brothers" : "براداران سرچشمه"}</b><small>SARCHASHMA BROTHERS</small></span></a><nav><a href="/#products">{t.products}</a><a href="/facilities" className={pathname === "/facilities" ? "active" : undefined} aria-current={pathname === "/facilities" ? "page" : undefined}>{t.facilities}</a><a href="/exports" className={pathname === "/exports" ? "active" : undefined} aria-current={pathname === "/exports" ? "page" : undefined}>{t.exports}</a><a href="/#order">{t.order}</a></nav><div className="language-switch" aria-label="Language"><button className={locale === "fa" ? "active" : ""} onClick={() => chooseLocale("fa")}>دری</button><button className={locale === "ps" ? "active" : ""} onClick={() => chooseLocale("ps")}>پښتو</button><button className={locale === "en" ? "active" : ""} onClick={() => chooseLocale("en")}>EN</button></div><a className="header-cta" href="/#order">{t.wholesale}</a></header>;
 }

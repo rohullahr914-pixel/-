@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import type { Product } from "@/lib/types";
 import { isAdmin } from "@/lib/auth";
 import { readDatabase, updateDatabase } from "@/lib/store";
@@ -7,5 +8,7 @@ export async function PUT(request: NextRequest) {
   if (!isAdmin(request)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const products = await request.json() as Product[];
   if (!Array.isArray(products) || products.some(p => !p.id || !p.slug || !p.name?.fa || !p.name?.en || !p.image || !Array.isArray(p.packages))) return NextResponse.json({ error: "Product information is incomplete." }, { status: 400 });
-  await updateDatabase(database => { database.products = products; }); return NextResponse.json({ ok: true });
+  await updateDatabase(database => { database.products = products; });
+  revalidatePath("/"); revalidatePath("/exports"); revalidatePath("/products/[slug]", "page");
+  return NextResponse.json({ ok: true });
 }
